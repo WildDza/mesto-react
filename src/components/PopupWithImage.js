@@ -1,4 +1,4 @@
-function ImagePopup(props) {
+function PopupWithImage(props) {
   if (props.isOpen) {
     return (
       <div className={`popup popup_open-image ${props.isOpen && "popup_show"}`}>
@@ -11,4 +11,4 @@ function ImagePopup(props) {
     );
   }
 }
-export default ImagePopup;
+export default PopupWithImage;
