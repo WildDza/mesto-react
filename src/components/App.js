@@ -3,7 +3,7 @@ import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
-import PopupWithImage from "./PopupWithImage";
+import ImagePopup from "./ImagePopup";
 import api from "../utils/Api";
 import "../index.css";
 
@@ -13,7 +13,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   useEffect(() => {
     api
@@ -37,8 +37,8 @@ function App() {
   }
 
   function handlePostClick(data) {
-    setIsImagePopupOpen(!selectedPost);
-    setSelectedPost(data);
+    setIsImagePopupOpen(!selectedCard);
+    setSelectedCard(data);
   }
 
   function closeAllPopups() {
@@ -46,7 +46,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
-    setSelectedPost(null);
+    setSelectedCard(null);
   }
 
   return (
@@ -123,7 +123,7 @@ function App() {
 
       <PopupWithForm name="delete" title="Вы уверены?" buttonSave="Да" onClose={closeAllPopups} />
 
-      <PopupWithImage post={selectedPost} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
+      <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
     </div>
   );
 }
