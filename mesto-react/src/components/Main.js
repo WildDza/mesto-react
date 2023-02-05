@@ -1,40 +1,46 @@
-function handleEditAvatarClick() {
-  document.querySelector(".popup_change-avatar").classList.add("popup_show");
-  console.log(document.querySelector(".popup_change-avatar"));
-}
-function handleEditProfileClick() {
-  document.querySelector(".popup_edit").classList.add("popup_show");
-  console.log(document.querySelector(".popup_edit"));
-}
-function handleAddPlaceClick() {
-  document.querySelector(".popup_add-post").classList.add("popup_show");
-  console.log(document.querySelector(".popup_add-post"));
-}
+import React, { useState, useEffect } from "react";
+import api from "../utils/Api";
+import Card from "./Card";
 
-function Main() {
+function Main({ posts, ...props }) {
+  const [userName, setUserName] = useState("");
+  const [userDescription, setUserDescription] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
+
+  useEffect(() => {
+    api
+      .getProfileInformation()
+      .then((data) => {
+        setUserName(data.name);
+        setUserDescription(data.about);
+        setUserAvatar(data.avatar);
+      })
+      .catch((error) => console.log("Ошибка... " + error));
+  }, []);
+
   return (
     <main className="content">
       <section className="profile" aria-label="Профиль">
         <div className="profile__avatar-container">
           <div className="profile__avatar-icon">
-            <button className="profile__avatar-edit" type="button" aria-label="Иконка карандаша" onClick={handleEditAvatarClick}></button>
+            <button className="profile__avatar-edit" type="button" aria-label="Иконка карандаша" onClick={props.onEditAvatar}></button>
           </div>
-          <img className="profile__img" alt="Фото профиля" />
+          <img className="profile__img" alt="Фото профиля" src={userAvatar} />
         </div>
 
         <div className="profile__info">
-          <h1 className="profile__title"></h1>
-          <button
-            className="profile__edit-icon"
-            type="button"
-            aria-label="Иконка корректировка личных данных"
-            onClick={handleEditProfileClick}
-          ></button>
-          <p className="profile__subtitle"></p>
+          <h1 className="profile__title">{userName}</h1>
+          <button className="profile__edit-icon" type="button" aria-label="Иконка корректировка личных данных" onClick={props.onEditProfile}></button>
+          <p className="profile__subtitle">{userDescription}</p>
         </div>
-        <button className="profile__add-button" type="button" aria-label="Иконка добавления поста" onClick={handleAddPlaceClick}></button>
+        <button className="profile__add-button" type="button" aria-label="Иконка добавления поста" onClick={props.onAddPlace}></button>
       </section>
-      <section className="posts" aria-label="Посты"></section>
+
+      <section className="posts" aria-label="Посты">
+        {posts.map((post) => (
+          <Card key={post._id} id={post._id} name={post.name} link={post.link} likes={post.likes.length} onPostClick={props.onPostClick} />
+        ))}
+      </section>
     </main>
   );
 }
