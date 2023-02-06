@@ -22,8 +22,8 @@ function Main({ posts, ...props }) {
     <main className="content">
       <section className="profile" aria-label="Профиль">
         <div className="profile__avatar-container">
-          <div className="profile__avatar-icon">
-            <button className="profile__avatar-edit" type="button" aria-label="Иконка карандаша" onClick={props.onEditAvatar}></button>
+          <div className="profile__avatar-icon" onClick={props.onEditAvatar}>
+            <button className="profile__avatar-edit" type="button" aria-label="Иконка карандаша"></button>
           </div>
           <img className="profile__img" alt="Фото профиля" src={userAvatar} />
         </div>
