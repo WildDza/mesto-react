@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
-import api from "../utils/Api";
+import React, { useContext } from "react";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function Main({ posts, ...props }) {
   const currentUser = useContext(CurrentUserContext);
+
+  const postElements = posts.map((post) => (
+    <Card key={post._id} post={post} onPostClick={props.onPostClick} onPostLike={props.onPostLike} onPostDelete={props.onPostDelete} />
+  ));
 
   return (
     <main className="content">
@@ -25,9 +28,7 @@ function Main({ posts, ...props }) {
       </section>
 
       <section className="posts" aria-label="Посты">
-        {posts.map((post) => (
-          <Card key={post._id} id={post._id} name={post.name} link={post.link} likes={post.likes.length} onPostClick={props.onPostClick} />
-        ))}
+        {postElements}
       </section>
     </main>
   );

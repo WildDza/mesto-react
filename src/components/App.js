@@ -15,7 +15,7 @@ function App() {
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
-  const [currentUser, setCurrentUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
     api
@@ -33,7 +33,7 @@ function App() {
         setPosts(data);
       })
       .catch((error) => console.log("Ошибка... " + error));
-  }, []);
+  }, [posts]);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -50,6 +50,24 @@ function App() {
   function handlePostClick(data) {
     setIsImagePopupOpen(!selectedCard);
     setSelectedCard(data);
+  }
+
+  function handlePostLike(post) {
+    const isLiked = post.likes.some((i) => i._id === currentUser._id);
+
+    api.changeLikePostStatus(post._id, isLiked).then((newPost) => {
+      setPosts((state) => state.map((p) => (p._id === post._id ? newPost : p)));
+    });
+  }
+
+  function handlePostDelete(post) {
+    api.deletePost(post._id);
+    api
+      .getInitialCards()
+      .then(() => {
+        setPosts((data) => data.filter((c) => c._id !== post._id));
+      })
+      .catch((error) => console.log("Ошибка... " + error));
   }
 
   function closeAllPopups() {
@@ -70,6 +88,8 @@ function App() {
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           posts={posts}
+          onPostLike={handlePostLike}
+          onPostDelete={handlePostDelete}
         />
         <Footer />
 
