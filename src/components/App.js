@@ -7,6 +7,7 @@ import ImagePopup from "./ImagePopup";
 import api from "../utils/Api";
 import "../index.css";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -14,7 +15,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
@@ -33,7 +34,7 @@ function App() {
         setPosts(data);
       })
       .catch((error) => console.log("Ошибка... " + error));
-  }, [posts]);
+  }, []);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -48,7 +49,7 @@ function App() {
   }
 
   function handlePostClick(data) {
-    setIsImagePopupOpen(!selectedCard);
+    setIsImagePopupOpen(!isImagePopupOpen);
     setSelectedCard(data);
   }
 
@@ -75,7 +76,19 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
-    setSelectedCard(null);
+    setSelectedCard({});
+  }
+
+  function handleUpdateUser(data) {
+    api
+      .editProfileInformation(data.name, data.about)
+      .then((data) => {
+        setCurrentUser(data);
+      })
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((error) => console.log("Ошибка... " + error));
   }
 
   return (
@@ -93,30 +106,7 @@ function App() {
         />
         <Footer />
 
-        <PopupWithForm name="edit" title="Редактировать профиль" buttonSave="Сохранить" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
-          <input
-            className="popup__input popup__input_name-area"
-            type="text"
-            name="name"
-            id="userName-input"
-            placeholder="Ваше имя"
-            minLength="2"
-            maxLength="40"
-            required
-          />
-          <span className="popup__input-error userName-input-error"></span>
-          <input
-            className="popup__input popup__input_type_about popup__input_addictions"
-            type="text"
-            name="about"
-            id="userAddictions-input"
-            placeholder="Чем Вы занимаетесь?"
-            minLength="2"
-            maxLength="200"
-            required
-          />
-          <span className="popup__input-error userAddictions-input-error"></span>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
         <PopupWithForm name="add" title="Новое место" buttonSave="Создать" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
           <input
