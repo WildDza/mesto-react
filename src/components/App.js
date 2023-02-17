@@ -9,6 +9,7 @@ import "../index.css";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -52,6 +53,18 @@ function App() {
   function handlePostClick(data) {
     setIsImagePopupOpen(!isImagePopupOpen);
     setSelectedCard(data);
+  }
+
+  function handleAddPost(data) {
+    api
+      .addPost(data.name, data.link)
+      .then((newPost) => {
+        setPosts([newPost, ...posts]);
+      })
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((error) => console.log("Ошибка... " + error));
   }
 
   function handlePostLike(post) {
@@ -123,28 +136,7 @@ function App() {
 
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
-        <PopupWithForm name="add" title="Новое место" buttonSave="Создать" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
-          <input
-            className="popup__input popup__input_name-img"
-            type="text"
-            name="name"
-            id="postName-input"
-            placeholder="Название"
-            minLength="2"
-            maxLength="30"
-            required
-          />
-          <span className="popup__input-error postName-input-error"></span>
-          <input
-            className="popup__input popup__input_type_about popup__input_url-img"
-            type="url"
-            name="link"
-            id="link-input"
-            placeholder="Ссылка на картинку"
-            required
-          />
-          <span className="popup__input-error link-input-error"></span>
-        </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPost} />
 
         <PopupWithForm name="delete" title="Вы уверены?" buttonSave="Да" onClose={closeAllPopups} />
 
