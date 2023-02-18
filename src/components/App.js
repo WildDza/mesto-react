@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
-import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import api from "../utils/Api";
 import "../index.css";
@@ -10,15 +9,18 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import DeletePostConfirm from "./DeletePostConfirm";
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
+  const [isConfirmDeletePopupOpen, setIsConfirmDeletePopupOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
+  const [currentPost, setCurrentPost] = useState({});
 
   useEffect(() => {
     api
@@ -55,6 +57,23 @@ function App() {
     setSelectedCard(data);
   }
 
+  function handlePostDeleteClick(data) {
+    setIsConfirmDeletePopupOpen(!isConfirmDeletePopupOpen);
+    setCurrentPost(data);
+  }
+
+  function handlePostDelete(post) {
+    api
+      .deletePost(post._id)
+      .then(() => {
+        setPosts((data) => data.filter((p) => p._id !== post._id));
+      })
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((error) => console.log("Ошибка... " + error));
+  }
+
   function handleAddPost(data) {
     api
       .addPost(data.name, data.link)
@@ -73,16 +92,6 @@ function App() {
     api.changeLikePostStatus(post._id, isLiked).then((newPost) => {
       setPosts((state) => state.map((p) => (p._id === post._id ? newPost : p)));
     });
-  }
-
-  function handlePostDelete(post) {
-    api.deletePost(post._id);
-    api
-      .getInitialCards()
-      .then(() => {
-        setPosts((data) => data.filter((c) => c._id !== post._id));
-      })
-      .catch((error) => console.log("Ошибка... " + error));
   }
 
   function handleUpdateUser(data) {
@@ -115,6 +124,8 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
     setSelectedCard({});
+    setCurrentPost({});
+    setIsConfirmDeletePopupOpen(false);
   }
 
   return (
@@ -128,7 +139,7 @@ function App() {
           onEditAvatar={handleEditAvatarClick}
           posts={posts}
           onPostLike={handlePostLike}
-          onPostDelete={handlePostDelete}
+          onPostDelete={handlePostDeleteClick}
         />
         <Footer />
 
@@ -136,11 +147,11 @@ function App() {
 
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPost} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPost={handleAddPost} />
 
-        <PopupWithForm name="delete" title="Вы уверены?" buttonSave="Да" onClose={closeAllPopups} />
+        <DeletePostConfirm post={currentPost} isOpen={isConfirmDeletePopupOpen} onClose={closeAllPopups} onSubmit={handlePostDelete} />
 
-        <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
+        <ImagePopup post={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
       </CurrentUserContext.Provider>
     </div>
   );

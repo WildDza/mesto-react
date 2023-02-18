@@ -40,7 +40,7 @@ function EditProfilePopup(props) {
     >
       <input
         onChange={handleNameUser}
-        value={nameUser}
+        value={nameUser || ""}
         className="popup__input popup__input_name-area"
         type="text"
         name="name"
@@ -53,7 +53,7 @@ function EditProfilePopup(props) {
       <span className="popup__input-error userName-input-error"></span>
       <input
         onChange={handleDescription}
-        value={description}
+        value={description || ""}
         className="popup__input popup__input_type_about popup__input_addictions"
         type="text"
         name="about"

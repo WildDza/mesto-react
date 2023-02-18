@@ -6,7 +6,7 @@ function PopupWithForm(props) {
         <form onSubmit={props.onSubmit} className={`popup__content-container popup__form popup__form-${props.name} `} name={props.name}>
           <h2 className="popup__title">{props.title}</h2>
           {props.children}
-          <button className={`popup__button-save popup__button-save_${props.name}`} type="submit" aria-label="Кнопка сохранить">
+          <button className={`popup__button-save popup__button-save_${props.name}`} type="submit" aria-label="Кнопка подтверждения">
             {props.buttonSave}
           </button>
         </form>

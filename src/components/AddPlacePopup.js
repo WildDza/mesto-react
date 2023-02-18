@@ -15,7 +15,7 @@ function AddPlacePopup(props) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    props.onAddPlace({
+    props.onAddPost({
       name: namePost,
       link: link,
     });
@@ -27,7 +27,7 @@ function AddPlacePopup(props) {
     <PopupWithForm name="add" title="Новое место" buttonSave="Создать" isOpen={props.isOpen} onClose={props.onClose} onSubmit={handleSubmit}>
       <input
         onChange={handleNamePost}
-        value={namePost}
+        value={namePost || ""}
         className="popup__input popup__input_name-img"
         type="text"
         name="name"
@@ -40,7 +40,7 @@ function AddPlacePopup(props) {
       <span className="popup__input-error postName-input-error"></span>
       <input
         onChange={handleLink}
-        value={link}
+        value={link || ""}
         className="popup__input popup__input_type_about popup__input_url-img"
         type="url"
         name="link"
