@@ -4,7 +4,6 @@ import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
 import api from "../utils/Api";
-import "../index.css";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
@@ -41,24 +40,24 @@ function App() {
   }, []);
 
   function handleEditAvatarClick() {
-    setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
+    setIsEditAvatarPopupOpen(true);
   }
 
   function handleEditProfileClick() {
-    setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
+    setIsEditProfilePopupOpen(true);
   }
 
   function handleAddPlaceClick() {
-    setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
+    setIsAddPlacePopupOpen(true);
   }
 
   function handlePostClick(data) {
-    setIsImagePopupOpen(!isImagePopupOpen);
+    setIsImagePopupOpen(true);
     setSelectedCard(data);
   }
 
   function handlePostDeleteClick(data) {
-    setIsConfirmDeletePopupOpen(!isConfirmDeletePopupOpen);
+    setIsConfirmDeletePopupOpen(true);
     setCurrentPost(data);
   }
 
@@ -89,9 +88,12 @@ function App() {
   function handlePostLike(post) {
     const isLiked = post.likes.some((i) => i._id === currentUser._id);
 
-    api.changeLikePostStatus(post._id, isLiked).then((newPost) => {
-      setPosts((state) => state.map((p) => (p._id === post._id ? newPost : p)));
-    });
+    api
+      .changeLikePostStatus(post._id, isLiked)
+      .then((newPost) => {
+        setPosts((state) => state.map((p) => (p._id === post._id ? newPost : p)));
+      })
+      .catch((error) => console.log("Ошибка... " + error));
   }
 
   function handleUpdateUser(data) {
