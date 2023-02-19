@@ -26,7 +26,7 @@ function Card(props) {
 
   return (
     <div id="post-template">
-      <article className="post" id={post.id}>
+      <article className="post">
         <img className="post__img" src={post.link} alt={post.name} onClick={handleClick} />
         {isOwn && <button className="post__delete" onClick={handleDeleteClick} type="button" aria-label="Иконка удаления поста" />}
         <div className="post__info">
